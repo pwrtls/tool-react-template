@@ -85,7 +85,7 @@ export class PowerToolsContextProvider extends React.PureComponent<IPowerToolsCo
     render() {
         return (
             <PowerToolsContext.Provider value={{ isLoaded: this.state.isLoaded, connectionName: this.state.connectionName, get: window.PowerTools?.get, download: window.PowerTools?.download }}>
-                { this.content }
+                {this.content}
             </PowerToolsContext.Provider>
         );
     }

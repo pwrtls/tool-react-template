@@ -11,8 +11,8 @@ import { usePowerToolsApi } from 'powertools/apiHook';
 export const MainView: React.FC = () => {
     const { connectionName } = useContext(PowerToolsContext);
     const { get, isLoaded } = usePowerToolsApi();
-    const [ loading, setLoading ] = useState(true);
-    const [ data, setData ] = useState<ISolution[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<ISolution[]>([]);
     const location = useLocation();
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export const MainView: React.FC = () => {
 
     return (
         <Spin spinning={!isLoaded}>
-            <h1>Hello, { connectionName }</h1>
+            <h1>Hello, {connectionName}</h1>
 
             <List
                 size="small"
@@ -53,7 +53,7 @@ export const MainView: React.FC = () => {
                             title={item.friendlyname}
                             description={item.uniquename}
                         />
-                        Publisher: <Typography.Text italic>{ item.publisherid.friendlyname }</Typography.Text>
+                        Publisher: <Typography.Text italic>{item.publisherid.friendlyname}</Typography.Text>
                     </List.Item>
                 )}
             />
