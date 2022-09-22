@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { List, Spin, Typography } from 'antd';
-import { useLocation } from 'react-router-dom';
 
 import { IoDataResponse } from 'models/oDataResponse';
 import { ISolution } from 'models/solutions';
@@ -13,30 +12,32 @@ export const MainView: React.FC = () => {
     const { get, isLoaded } = usePowerToolsApi();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<ISolution[]>([]);
-    const location = useLocation();
 
-    useEffect(() => {
-        console.log(location);
-    }, [location]);
+    const loadSolutions = async () => {
+        if (!get) {
+            return;
+        }
+
+        const query = new URLSearchParams();
+        query.set(`$select`, `friendlyname,uniquename`);
+        query.set(`$expand`, `publisherid`);
+        query.set(`$filter`, `(isvisible eq true)`);
+        query.set(`$orderby`, `createdon desc`);
+
+        const res = await get('/api/data/v9.0/solutions', query);
+        const js = await res.asJson<IoDataResponse<ISolution>>();
+
+        setData(js.value);
+    }
 
     useEffect(() => {
         setLoading(true);
 
-        const loadSolutions = async () => {
-            const query = new URLSearchParams();
-            query.set(`$select`, `friendlyname,uniquename`);
-            query.set(`$expand`, `publisherid`);
-            query.set(`$filter`, `(isvisible eq true)`);
-            query.set(`$orderby`, `createdon desc`);
-
-            const res = await window.PowerTools.get("/api/data/v9.0/solutions", query); //view history: /api/data/v9.0/solutionhistories
-            const js = await res.asJson<IoDataResponse<ISolution>>();
-
-            setData(js.value);
-        }
-
         Promise.all([loadSolutions()]).then(() => setLoading(false));
-    }, [get, isLoaded, connectionName]);
+
+        // TODO: figure out how to improve this, as we should be able to add the loadSolutions to the dependencies
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoaded, connectionName]);
 
     return (
         <Spin spinning={!isLoaded}>
